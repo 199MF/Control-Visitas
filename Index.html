@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rolli Guard 2.0 — Essity</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #00005A;
+  --navy-light: #00007a;
+  --navy-dark: #000040;
+  --pink: #F50082;
+  --pink-light: #ff1a90;
+  --pink-glow: rgba(245,0,130,0.18);
+  --white: #ffffff;
+  --off-white: #f8f8fc;
+  --gray-100: #f0f0f7;
+  --gray-200: #e0e0ef;
+  --gray-400: #9090b0;
+  --gray-600: #5a5a80;
+  --success: #00c875;
+  --danger: #ff3b5c;
+  --border: rgba(0,0,90,0.10);
+  --shadow-sm: 0 2px 12px rgba(0,0,90,0.08);
+  --shadow-md: 0 8px 32px rgba(0,0,90,0.13);
+  --shadow-lg: 0 20px 60px rgba(0,0,90,0.18);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘Outfit’, sans-serif;
+background: var(–off-white);
+color: var(–navy);
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* ──────────────────────────────────────────
+SIDEBAR LAYOUT
+────────────────────────────────────────── */
+.app-shell {
+display: flex;
+min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+width: 260px;
+background: var(–navy);
+display: flex;
+flex-direction: column;
+position: fixed;
+top: 0; left: 0; bottom: 0;
+z-index: 100;
+transition: transform 0.3s ease;
+}
+
+.sidebar-brand {
+padding: 28px 24px 20px;
+border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.brand-logo {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-bottom: 10px;
+}
+
+/* Essity logo SVG inline */
+.essity-logo-wrap {
+background: white;
+border-radius: 8px;
+padding: 6px 10px;
+display: flex;
+align-items: center;
+}
+
+.brand-app-name {
+color: white;
+font-size: 1.25rem;
+font-weight: 800;
+letter-spacing: -0.3px;
+line-height: 1.1;
+}
+.brand-app-name span { color: var(–pink); }
+.brand-version {
+font-size: 0.65rem;
+color: rgba(255,255,255,0.4);
+font-weight: 500;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-top: 2px;
+}
+
+.sidebar-nav {
+flex: 1;
+padding: 20px 14px;
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+
+.nav-label {
+font-size: 0.65rem;
+font-weight: 700;
+letter-spacing: 0.14em;
+text-transform: uppercase;
+color: rgba(255,255,255,0.3);
+padding: 16px 10px 8px;
+}
+
+.nav-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 12px 14px;
+border-radius: var(–radius-sm);
+color: rgba(255,255,255,0.65);
+font-size: 0.9rem;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.18s;
+border: none;
+background: none;
+width: 100%;
+text-align: left;
+}
+.nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+.nav-item.active {
+background: var(–pink);
+color: white;
+font-weight: 600;
+box-shadow: 0 4px 16px rgba(245,0,130,0.35);
+}
+.nav-item .nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
+.nav-badge {
+margin-left: auto;
+background: var(–pink);
+color: white;
+font-size: 0.7rem;
+font-weight: 700;
+padding: 2px 8px;
+border-radius: 99px;
+min-width: 22px;
+text-align: center;
+}
+.nav-item.active .nav-badge { background: rgba(255,255,255,0.25); }
+
+.sidebar-footer {
+padding: 16px 14px;
+border-top: 1px solid rgba(255,255,255,0.08);
+}
+.footer-time {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 0.8rem;
+color: rgba(255,255,255,0.35);
+text-align: center;
+}
+
+/* MAIN CONTENT */
+.main-content {
+margin-left: 260px;
+flex: 1;
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+}
+
+/* TOP BAR */
+.topbar {
+background: white;
+border-bottom: 1px solid var(–border);
+padding: 0 36px;
+height: 68px;
+display: flex;
+align-items: center;
+gap: 20px;
+position: sticky;
+top: 0;
+z-index: 50;
+box-shadow: var(–shadow-sm);
+}
+
+.topbar-title {
+font-size: 1.1rem;
+font-weight: 700;
+color: var(–navy);
+}
+.topbar-sub {
+font-size: 0.8rem;
+color: var(–gray-400);
+margin-top: 1px;
+}
+
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 14px; }
+
+.status-pill {
+display: flex;
+align-items: center;
+gap: 7px;
+background: #e8fdf3;
+color: #00a05a;
+font-size: 0.78rem;
+font-weight: 600;
+padding: 6px 14px;
+border-radius: 99px;
+border: 1px solid #b8f0d4;
+}
+.status-dot {
+width: 7px; height: 7px;
+border-radius: 50%;
+background: var(–success);
+animation: pulse 2s infinite;
+}
+@keyframes pulse {
+0%,100% { opacity:1; transform:scale(1); }
+50% { opacity:0.6; transform:scale(1.3); }
+}
+
+/* PAGE CONTENT */
+.page-body { padding: 36px; flex: 1; }
+
+.view { display: none; animation: fadeIn 0.25s ease; }
+.view.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+/* ──────────────────────────────────────────
+STATS GRID
+────────────────────────────────────────── */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 18px;
+margin-bottom: 32px;
+}
+
+.stat-card {
+background: white;
+border-radius: var(–radius);
+padding: 22px 24px;
+border: 1px solid var(–border);
+box-shadow: var(–shadow-sm);
+position: relative;
+overflow: hidden;
+transition: transform 0.18s, box-shadow 0.18s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(–shadow-md); }
+.stat-card::after {
+content: ‘’;
+position: absolute;
+bottom: 0; left: 0; right: 0;
+height: 3px;
+}
+.stat-card.navy::after { background: var(–navy); }
+.stat-card.pink::after { background: var(–pink); }
+.stat-card.green::after { background: var(–success); }
+.stat-card.purple::after { background: #7c3aed; }
+
+.stat-icon {
+font-size: 1.6rem;
+margin-bottom: 12px;
+display: block;
+}
+.stat-value {
+font-size: 2.4rem;
+font-weight: 900;
+line-height: 1;
+color: var(–navy);
+margin-bottom: 4px;
+font-variant-numeric: tabular-nums;
+}
+.stat-label {
+font-size: 0.78rem;
+font-weight: 600;
+color: var(–gray-400);
+text-transform: uppercase;
+letter-spacing: 0.08em;
+}
+
+/* ──────────────────────────────────────────
+SECTION HEADERS
+────────────────────────────────────────── */
+.section-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 20px;
+}
+.section-title {
+font-size: 1.35rem;
+font-weight: 800;
+color: var(–navy);
+letter-spacing: -0.3px;
+}
+.section-title span { color: var(–pink); }
+
+/* ──────────────────────────────────────────
+CARDS
+────────────────────────────────────────── */
+.card {
+background: white;
+border-radius: var(–radius);
+border: 1px solid var(–border);
+box-shadow: var(–shadow-sm);
+overflow: hidden;
+}
+.card-header {
+padding: 20px 28px;
+border-bottom: 1px solid var(–gray-100);
+display: flex;
+align-items: center;
+gap: 12px;
+}
+.card-header-icon {
+width: 40px; height: 40px;
+border-radius: 10px;
+background: var(–navy);
+display: flex; align-items: center; justify-content: center;
+font-size: 1.1rem;
+flex-shrink: 0;
+}
+.card-header-title { font-size: 1rem; font-weight: 700; }
+.card-header-sub { font-size: 0.78rem; color: var(–gray-400); margin-top: 1px; }
+.card-body { padding: 28px; }
+
+/* ──────────────────────────────────────────
+FORM
+────────────────────────────────────────── */
+.form-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 20px;
+}
+.form-group { display: flex; flex-direction: column; gap: 7px; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group.third { grid-column: span 1; }
+
+label {
+font-size: 0.73rem;
+font-weight: 700;
+letter-spacing: 0.09em;
+text-transform: uppercase;
+color: var(–gray-600);
+}
+.required-star { color: var(–pink); }
+
+input[type=“text”], select, textarea {
+font-family: ‘Outfit’, sans-serif;
+font-size: 0.95rem;
+font-weight: 400;
+padding: 12px 16px;
+border: 1.5px solid var(–gray-200);
+border-radius: var(–radius-sm);
+background: white;
+color: var(–navy);
+outline: none;
+transition: border 0.15s, box-shadow 0.15s;
+width: 100%;
+}
+input[type=“text”]:focus, select:focus {
+border-color: var(–pink);
+box-shadow: 0 0 0 3px var(–pink-glow);
+}
+input[type=“text”]::placeholder { color: var(–gray-400); font-weight: 400; }
+select { appearance: none; background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘16’ height=‘16’ viewBox=‘0 0 24 24’ fill=‘none’ stroke=’%239090b0’ stroke-width=‘2’%3E%3Cpath d=‘m6 9 6 6 6-6’/%3E%3C/svg%3E”); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+/* PHOTO SECTION */
+.photo-section {
+display: flex;
+align-items: flex-start;
+gap: 28px;
+padding: 20px;
+background: var(–gray-100);
+border-radius: var(–radius-sm);
+border: 1.5px dashed var(–gray-200);
+}
+.photo-circle-wrap {
+position: relative;
+flex-shrink: 0;
+}
+.photo-ring {
+width: 120px; height: 120px;
+border-radius: 50%;
+border: 3px solid var(–navy);
+overflow: hidden;
+background: white;
+display: flex; align-items: center; justify-content: center;
+position: relative;
+}
+.photo-ring.has-photo { border-color: var(–pink); }
+#photo-placeholder-icon { font-size: 3rem; color: var(–gray-200); }
+#video-feed { width: 100%; height: 100%; object-fit: cover; display: none; }
+#photo-preview { width: 100%; height: 100%; object-fit: cover; display: none; }
+.photo-actions {
+display: flex;
+flex-direction: column;
+gap: 10px;
+justify-content: center;
+}
+.photo-hint { font-size: 0.78rem; color: var(–gray-400); margin-top: 4px; line-height: 1.5; }
+
+/* ──────────────────────────────────────────
+BUTTONS
+────────────────────────────────────────── */
+.btn {
+font-family: ‘Outfit’, sans-serif;
+font-size: 0.88rem;
+font-weight: 600;
+padding: 10px 20px;
+border-radius: var(–radius-sm);
+border: none;
+cursor: pointer;
+transition: all 0.15s;
+display: inline-flex;
+align-items: center;
+gap: 7px;
+white-space: nowrap;
+}
+.btn-primary {
+background: var(–pink);
+color: white;
+box-shadow: 0 4px 14px rgba(245,0,130,0.3);
+}
+.btn-primary:hover { background: var(–pink-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(245,0,130,0.4); }
+.btn-navy {
+background: var(–navy);
+color: white;
+box-shadow: 0 4px 14px rgba(0,0,90,0.2);
+}
+.btn-navy:hover { background: var(–navy-light); transform: translateY(-1px); }
+.btn-outline {
+background: transparent;
+color: var(–navy);
+border: 1.5px solid var(–gray-200);
+}
+.btn-outline:hover { border-color: var(–navy); background: var(–gray-100); }
+.btn-danger { background: var(–danger); color: white; box-shadow: 0 4px 14px rgba(255,59,92,0.25); }
+.btn-danger:hover { background: #e02347; transform: translateY(-1px); }
+.btn-success { background: var(–success); color: white; box-shadow: 0 4px 14px rgba(0,200,117,0.25); }
+.btn-success:hover { transform: translateY(-1px); }
+.btn-sm { padding: 7px 14px; font-size: 0.8rem; }
+.btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: 10px; }
+.btn-icon-only { padding: 8px; width: 36px; height: 36px; justify-content: center; }
+
+.form-actions {
+display: flex;
+justify-content: flex-end;
+gap: 12px;
+margin-top: 28px;
+padding-top: 24px;
+border-top: 1px solid var(–gray-100);
+}
+
+/* ──────────────────────────────────────────
+TABLE
+────────────────────────────────────────── */
+.table-toolbar {
+padding: 16px 24px;
+border-bottom: 1px solid var(–gray-100);
+display: flex;
+align-items: center;
+gap: 14px;
+}
+.search-input-wrap {
+position: relative;
+flex: 1;
+max-width: 320px;
+}
+.search-input-wrap input {
+padding-left: 40px;
+background: var(–gray-100);
+border-color: transparent;
+}
+.search-input-wrap input:focus { background: white; }
+.search-icon {
+position: absolute;
+left: 13px; top: 50%;
+transform: translateY(-50%);
+color: var(–gray-400);
+font-size: 0.9rem;
+pointer-events: none;
+}
+
+table { width: 100%; border-collapse: collapse; }
+thead tr {
+background: var(–navy);
+color: white;
+}
+thead th {
+padding: 13px 20px;
+text-align: left;
+font-size: 0.72rem;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+white-space: nowrap;
+}
+thead th:first-child { border-radius: 0; }
+tbody tr {
+border-bottom: 1px solid var(–gray-100);
+transition: background 0.12s;
+}
+tbody tr:hover { background: var(–off-white); }
+tbody td {
+padding: 13px 20px;
+vertical-align: middle;
+font-size: 0.88rem;
+}
+.table-empty {
+text-align: center;
+padding: 60px 20px !important;
+color: var(–gray-400);
+}
+.table-empty-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+
+.visitor-avatar {
+width: 40px; height: 40px;
+border-radius: 50%;
+object-fit: cover;
+border: 2px solid var(–gray-200);
+}
+.visitor-avatar-placeholder {
+width: 40px; height: 40px;
+border-radius: 50%;
+background: var(–gray-100);
+border: 2px solid var(–gray-200);
+display: flex; align-items: center; justify-content: center;
+font-size: 1.1rem;
+color: var(–gray-400);
+}
+
+.visitor-name { font-weight: 600; color: var(–navy); }
+.visitor-id-sub { font-size: 0.75rem; color: var(–gray-400); font-family: ‘JetBrains Mono’, monospace; }
+
+/* BADGES */
+.badge {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+padding: 4px 12px;
+border-radius: 99px;
+font-size: 0.72rem;
+font-weight: 700;
+letter-spacing: 0.04em;
+}
+.badge-active {
+background: #e8fdf3;
+color: #00a05a;
+border: 1px solid #b8f0d4;
+}
+.badge-out {
+background: var(–gray-100);
+color: var(–gray-400);
+border: 1px solid var(–gray-200);
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+.badge-active .badge-dot { background: var(–success); animation: pulse 2s infinite; }
+.badge-out .badge-dot { background: var(–gray-400); }
+
+.actions-cell { display: flex; gap: 7px; flex-wrap: nowrap; }
+
+/* ──────────────────────────────────────────
+MODAL
+────────────────────────────────────────── */
+.modal-overlay {
+display: none;
+position: fixed; inset: 0;
+background: rgba(0,0,40,0.6);
+backdrop-filter: blur(6px);
+z-index: 200;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+.modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
+
+.modal {
+background: white;
+border-radius: 20px;
+padding: 0;
+max-width: 440px;
+width: 100%;
+box-shadow: var(–shadow-lg);
+overflow: hidden;
+}
+.modal-top {
+background: var(–navy);
+padding: 24px 28px 20px;
+position: relative;
+}
+.modal-top-title {
+font-size: 1rem;
+font-weight: 800;
+color: white;
+margin-bottom: 2px;
+}
+.modal-top-sub { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+.modal-close {
+position: absolute; top: 16px; right: 20px;
+background: rgba(255,255,255,0.1);
+border: none;
+width: 32px; height: 32px;
+border-radius: 50%;
+cursor: pointer;
+color: white;
+font-size: 1rem;
+display: flex; align-items: center; justify-content: center;
+transition: background 0.15s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.2); }
+.modal-body { padding: 24px 28px; }
+.modal-footer { padding: 0 28px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ──────────────────────────────────────────
+CREDENTIAL CARD
+────────────────────────────────────────── */
+.credential-card {
+width: 100%;
+background: var(–navy);
+border-radius: 16px;
+padding: 0;
+overflow: hidden;
+position: relative;
+color: white;
+font-family: ‘Outfit’, sans-serif;
+}
+.cred-header {
+background: var(–pink);
+padding: 10px 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+}
+.cred-header-label {
+font-size: 0.62rem;
+font-weight: 800;
+letter-spacing: 0.18em;
+text-transform: uppercase;
+color: white;
+}
+.cred-header-logo {
+background: white;
+border-radius: 5px;
+padding: 3px 8px;
+font-size: 0.7rem;
+font-weight: 800;
+color: var(–navy);
+}
+.cred-body { padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
+.cred-photo {
+width: 72px; height: 72px;
+border-radius: 12px;
+object-fit: cover;
+border: 3px solid var(–pink);
+flex-shrink: 0;
+}
+.cred-photo-placeholder {
+width: 72px; height: 72px;
+border-radius: 12px;
+background: rgba(255,255,255,0.08);
+border: 3px solid rgba(255,255,255,0.2);
+display: flex; align-items: center; justify-content: center;
+font-size: 2rem;
+flex-shrink: 0;
+}
+.cred-info { flex: 1; min-width: 0; }
+.cred-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cred-company { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-bottom: 12px; }
+.cred-row { display: flex; gap: 6px; align-items: baseline; margin-bottom: 5px; }
+.cred-row-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.09em; color: var(–pink); font-weight: 700; min-width: 54px; }
+.cred-row-value { font-size: 0.8rem; color: rgba(255,255,255,0.85); }
+.cred-footer {
+margin: 0 20px 16px;
+padding-top: 12px;
+border-top: 1px solid rgba(255,255,255,0.08);
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.cred-id-text { font-family: ‘JetBrains Mono’, monospace; font-size: 0.68rem; color: rgba(255,255,255,0.3); }
+.cred-qr-placeholder {
+width: 40px; height: 40px;
+background: rgba(255,255,255,0.06);
+border-radius: 6px;
+display: flex; align-items: center; justify-content: center;
+font-size: 1.2rem;
+}
+
+/* ──────────────────────────────────────────
+TOAST
+────────────────────────────────────────── */
+.toast {
+position: fixed;
+bottom: 32px; right: 32px;
+padding: 14px 22px;
+border-radius: 12px;
+font-size: 0.88rem;
+font-weight: 600;
+box-shadow: var(–shadow-lg);
+z-index: 999;
+transform: translateY(80px) scale(0.95);
+opacity: 0;
+transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+pointer-events: none;
+display: flex;
+align-items: center;
+gap: 10px;
+max-width: 340px;
+}
+.toast.show { transform: translateY(0) scale(1); opacity: 1; }
+.toast-success { background: var(–navy); color: white; border-left: 4px solid var(–success); }
+.toast-error { background: var(–navy); color: white; border-left: 4px solid var(–danger); }
+.toast-info { background: var(–navy); color: white; border-left: 4px solid var(–pink); }
+
+/* ──────────────────────────────────────────
+RESPONSIVE
+────────────────────────────────────────── */
+@media (max-width: 900px) {
+.stats-grid { grid-template-columns: repeat(2, 1fr); }
+.form-grid { grid-template-columns: 1fr; }
+.form-group.full { grid-column: 1; }
+}
+@media (max-width: 700px) {
+.sidebar { transform: translateX(-100%); }
+.sidebar.open { transform: translateX(0); }
+.main-content { margin-left: 0; }
+.page-body { padding: 20px 16px; }
+.stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+.topbar { padding: 0 20px; }
+}
+
+canvas { display: none; }
+
+/* PRINT */
+@media print {
+body * { visibility: hidden; }
+#print-zone, #print-zone * { visibility: visible; }
+#print-zone {
+position: fixed; inset: 0;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+background: white;
+padding: 40px;
+}
+.credential-card { max-width: 360px; }
+.no-print { display: none !important; }
+}
+
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(–gray-100); margin: 24px 0; }
+
+/* EMPTY STATE */
+.empty-state {
+text-align: center;
+padding: 64px 32px;
+color: var(–gray-400);
+}
+.empty-state-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+.empty-state-title { font-size: 1rem; font-weight: 700; color: var(–gray-600); margin-bottom: 6px; }
+.empty-state-desc { font-size: 0.85rem; }
+
+/* PINK ACCENT LINE on card top */
+.card.accent-top { border-top: 3px solid var(–pink); }
+
+/* Hamburger */
+.hamburger {
+display: none;
+background: none;
+border: none;
+font-size: 1.4rem;
+cursor: pointer;
+color: var(–navy);
+margin-right: 4px;
+}
+@media (max-width: 700px) { .hamburger { display: flex; } }
+
+.overlay-bg {
+display: none;
+position: fixed; inset: 0;
+background: rgba(0,0,40,0.4);
+z-index: 99;
+}
+.overlay-bg.open { display: block; }
+</style>
+
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ══════════════════════════════
+       SIDEBAR
+  ══════════════════════════════ -->
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <div class="essity-logo-wrap">
+          <!-- Essity logo SVG simplified -->
+          <svg width="72" height="24" viewBox="0 0 120 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Flower icon -->
+            <circle cx="11" cy="11" r="4.5" fill="#F50082"/>
+            <circle cx="19" cy="11" r="4.5" fill="#F50082"/>
+            <circle cx="7"  cy="19" r="4.5" fill="#F50082"/>
+            <circle cx="15" cy="19" r="4.5" fill="#00005A"/>
+            <circle cx="23" cy="19" r="4.5" fill="#F50082"/>
+            <circle cx="11" cy="27" r="4.5" fill="#F50082"/>
+            <circle cx="19" cy="27" r="4.5" fill="#F50082"/>
+            <!-- essity text -->
+            <text x="33" y="25" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#00005A">essity</text>
+          </svg>
+        </div>
+      </div>
+      <div class="brand-app-name">Rolli Guard <span>2.0</span></div>
+      <div class="brand-version">✦ Versión con IA · Control de Visitas</div>
+    </div>
+
+```
+<nav class="sidebar-nav">
+  <div class="nav-label">Principal</div>
+  <button class="nav-item active" onclick="showView('registro', this)">
+    <span class="nav-icon">➕</span> Nueva Visita
+  </button>
+  <button class="nav-item" onclick="showView('activos', this)">
+    <span class="nav-icon">🏢</span> En Instalaciones
+    <span class="nav-badge" id="badge-activos">0</span>
+  </button>
+
+  <div class="nav-label">Reportes</div>
+  <button class="nav-item" onclick="showView('historial', this)">
+    <span class="nav-icon">📋</span> Historial completo
+  </button>
+</nav>
+
+<div class="sidebar-footer">
+  <div class="footer-time" id="clock">--:-- --</div>
+</div>
+```
+
+  </aside>
+
+  <div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
+
+  <!-- ══════════════════════════════
+       MAIN
+  ══════════════════════════════ -->
+
+  <div class="main-content">
+
+```
+<!-- TOP BAR -->
+<header class="topbar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div>
+    <div class="topbar-title" id="topbar-title">Nueva Visita</div>
+    <div class="topbar-sub" id="topbar-sub">Registra la entrada de un visitante externo</div>
+  </div>
+  <div class="topbar-right">
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      Sistema activo
+    </div>
+  </div>
+</header>
+
+<div class="page-body">
+
+  <!-- ══════════
+       REGISTRO
+  ══════════ -->
+  <div class="view active" id="view-registro">
+    <div class="stats-grid">
+      <div class="stat-card navy">
+        <span class="stat-icon">👤</span>
+        <div class="stat-value" id="stat-activos-r">0</div>
+        <div class="stat-label">En instalaciones</div>
+      </div>
+      <div class="stat-card pink">
+        <span class="stat-icon">📅</span>
+        <div class="stat-value" id="stat-hoy-r">0</div>
+        <div class="stat-label">Visitas hoy</div>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-icon">✅</span>
+        <div class="stat-value" id="stat-salidas-r">0</div>
+        <div class="stat-label">Salidas hoy</div>
+      </div>
+      <div class="stat-card purple">
+        <span class="stat-icon">📊</span>
+        <div class="stat-value" id="stat-total-r">0</div>
+        <div class="stat-label">Total histórico</div>
+      </div>
+    </div>
+
+    <div class="card accent-top">
+      <div class="card-header">
+        <div class="card-header-icon">📝</div>
+        <div>
+          <div class="card-header-title">Datos del visitante</div>
+          <div class="card-header-sub">Los campos marcados con <span style="color:var(--pink)">*</span> son obligatorios</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Nombre completo <span class="required-star">*</span></label>
+            <input type="text" id="v-nombre" placeholder="Ej. María González López" />
+          </div>
+
+          <div class="form-group">
+            <label>Empresa / Compañía <span class="required-star">*</span></label>
+            <input type="text" id="v-empresa" placeholder="Ej. Distribuciones ABC S.A." />
+          </div>
+
+          <div class="form-group">
+            <label>Visita a <span class="required-star">*</span></label>
+            <input type="text" id="v-visita" placeholder="Nombre del empleado" />
+          </div>
+
+          <div class="form-group">
+            <label>Departamento</label>
+            <input type="text" id="v-depto" placeholder="Ej. Recursos Humanos, Logística..." />
+          </div>
+
+          <div class="form-group">
+            <label>Motivo de visita</label>
+            <input type="text" id="v-motivo" placeholder="Reunión, entrega, mantenimiento..." />
+          </div>
+
+          <div class="form-group">
+            <label>No. Identificación</label>
+            <input type="text" id="v-idnum" placeholder="INE, Pasaporte, Licencia..." />
+          </div>
+
+          <!-- FOTO -->
+          <div class="form-group full">
+            <label>Fotografía del visitante</label>
+            <div class="photo-section">
+              <div class="photo-circle-wrap">
+                <div class="photo-ring" id="photo-ring">
+                  <span id="photo-placeholder-icon">👤</span>
+                  <video id="video-feed" autoplay playsinline></video>
+                  <img id="photo-preview" alt="Foto visitante" />
+                </div>
+              </div>
+              <div class="photo-actions">
+                <button class="btn btn-outline" onclick="startCamera()">📷 Abrir cámara</button>
+                <button class="btn btn-primary" id="btn-snap" onclick="snapPhoto()" style="display:none;">✅ Tomar foto</button>
+                <button class="btn btn-outline" id="btn-retake" onclick="retakePhoto()" style="display:none;">🔄 Repetir</button>
+                <label class="btn btn-outline" for="file-photo" style="cursor:pointer;">🖼 Subir imagen</label>
+                <input type="file" id="file-photo" accept="image/*" style="display:none;" onchange="loadFilePhoto(event)" />
+                <p class="photo-hint">La fotografía se imprimirá en la credencial del visitante.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <canvas id="snap-canvas" width="300" height="300"></canvas>
+
+        <div class="form-actions">
+          <button class="btn btn-outline" onclick="clearForm()">🗑 Limpiar</button>
+          <button class="btn btn-primary btn-lg" onclick="registrarVisita()">
+            ✅ Registrar entrada
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════
+       ACTIVOS
+  ══════════ -->
+  <div class="view" id="view-activos">
+    <div class="stats-grid" style="margin-bottom:28px;">
+      <div class="stat-card navy">
+        <span class="stat-icon">👥</span>
+        <div class="stat-value" id="stat-activos-a">0</div>
+        <div class="stat-label">En instalaciones</div>
+      </div>
+      <div class="stat-card pink">
+        <span class="stat-icon">📅</span>
+        <div class="stat-value" id="stat-hoy-a">0</div>
+        <div class="stat-label">Visitas hoy</div>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-icon">✅</span>
+        <div class="stat-value" id="stat-salidas-a">0</div>
+        <div class="stat-label">Salidas hoy</div>
+      </div>
+      <div class="stat-card purple">
+        <span class="stat-icon">📊</span>
+        <div class="stat-value" id="stat-total-a">0</div>
+        <div class="stat-label">Total histórico</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-toolbar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-activos" placeholder="Buscar visitante..." oninput="renderActivos()" />
+        </div>
+        <div style="margin-left:auto;">
+          <button class="btn btn-primary btn-sm" onclick="showView('registro', document.querySelector('.nav-item'))">➕ Nueva visita</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>Foto</th>
+            <th>Visitante</th>
+            <th>Empresa</th>
+            <th>Visita a</th>
+            <th>Entrada</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr></thead>
+          <tbody id="tbody-activos">
+            <tr><td colspan="7" class="table-empty">
+              <span class="table-empty-icon">🏢</span>
+              Sin visitantes activos en este momento
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════
+       HISTORIAL
+  ══════════ -->
+  <div class="view" id="view-historial">
+    <div class="card">
+      <div class="table-toolbar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-hist" placeholder="Buscar en historial..." oninput="renderHistorial()" />
+        </div>
+        <div style="margin-left:auto; display:flex; gap:10px;">
+          <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Exportar CSV</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr>
+            <th>Foto</th>
+            <th>Visitante</th>
+            <th>Empresa</th>
+            <th>Visita a</th>
+            <th>Entrada</th>
+            <th>Salida</th>
+            <th>Estado</th>
+          </tr></thead>
+          <tbody id="tbody-historial">
+            <tr><td colspan="7" class="table-empty">
+              <span class="table-empty-icon">📋</span>
+              Sin registros históricos aún
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-body -->
+```
+
+  </div><!-- /main-content -->
+</div><!-- /app-shell -->
+
+<!-- ══════════════════════════
+     MODAL CREDENCIAL ENTRADA
+══════════════════════════ -->
+
+<div class="modal-overlay" id="modal-cred">
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-top-title">🎉 Visita registrada exitosamente</div>
+      <div class="modal-top-sub">Imprime la credencial de acceso</div>
+      <button class="modal-close" onclick="closeModal('modal-cred')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="print-zone">
+        <div class="credential-card" id="credential-card"></div>
+      </div>
+    </div>
+    <div class="modal-footer no-print">
+      <button class="btn btn-outline" onclick="closeModal('modal-cred')">Cerrar</button>
+      <button class="btn btn-navy" onclick="printCredential('print-zone')">🖨 Imprimir credencial</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     MODAL SALIDA
+══════════════════════════ -->
+
+<div class="modal-overlay" id="modal-salida">
+  <div class="modal">
+    <div class="modal-top" style="background:var(--danger);">
+      <div class="modal-top-title">🚪 Registro de salida</div>
+      <div class="modal-top-sub">Confirma la salida del visitante</div>
+      <button class="modal-close" onclick="closeModal('modal-salida')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="print-zone-salida">
+        <div class="credential-card" id="credential-salida"></div>
+      </div>
+      <p style="text-align:center;color:var(--gray-400);font-size:0.82rem;margin-top:16px;">¿Confirmas que este visitante está saliendo de las instalaciones?</p>
+    </div>
+    <div class="modal-footer no-print">
+      <button class="btn btn-outline" onclick="closeModal('modal-salida')">Cancelar</button>
+      <button class="btn btn-outline" onclick="printCredential('print-zone-salida')">🖨 Comprobante</button>
+      <button class="btn btn-danger" onclick="confirmarSalida()">✅ Confirmar salida</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let visitors = JSON.parse(localStorage.getItem('rolliGuard_v2') || '[]');
+let photoDataURL = null;
+let cameraStream = null;
+let pendingSalidaId = null;
+
+function save() {
+  localStorage.setItem('rolliGuard_v2', JSON.stringify(visitors));
+}
+
+// ─────────────────────────────────────────
+// CLOCK
+// ─────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('es-MX', {
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  }) + ' · ' + now.toLocaleDateString('es-MX', { weekday: 'short', day: '2-digit', month: 'short' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ─────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────
+const titles = {
+  registro: ['Nueva Visita', 'Registra la entrada de un visitante externo'],
+  activos:  ['En Instalaciones', 'Visitantes activos en este momento'],
+  historial:['Historial Completo', 'Registro total de visitas y salidas']
+};
+
+function showView(v, btn) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else {
+    const btns = document.querySelectorAll('.nav-item');
+    const idx = ['registro','activos','historial'].indexOf(v);
+    if (idx >= 0 && btns[idx]) btns[idx].classList.add('active');
+  }
+  document.getElementById('topbar-title').textContent = titles[v][0];
+  document.getElementById('topbar-sub').textContent = titles[v][1];
+  if (v !== 'registro') { stopCamera(); }
+  if (v === 'activos') { updateStats(); renderActivos(); }
+  if (v === 'historial') renderHistorial();
+  closeSidebar();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay-bg').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay-bg').classList.remove('open');
+}
+
+// ─────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.className = 'toast toast-' + type;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ─────────────────────────────────────────
+// CAMERA
+// ─────────────────────────────────────────
+async function startCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+    const video = document.getElementById('video-feed');
+    video.srcObject = cameraStream;
+    video.style.display = 'block';
+    document.getElementById('photo-placeholder-icon').style.display = 'none';
+    document.getElementById('photo-preview').style.display = 'none';
+    document.getElementById('btn-snap').style.display = 'inline-flex';
+    document.getElementById('btn-retake').style.display = 'none';
+  } catch(e) { toast('No se pudo acceder a la cámara', 'error'); }
+}
+
+function snapPhoto() {
+  const video = document.getElementById('video-feed');
+  const canvas = document.getElementById('snap-canvas');
+  canvas.getContext('2d').drawImage(video, 0, 0, 300, 300);
+  photoDataURL = canvas.toDataURL('image/jpeg', 0.88);
+  const preview = document.getElementById('photo-preview');
+  preview.src = photoDataURL;
+  preview.style.display = 'block';
+  video.style.display = 'none';
+  document.getElementById('btn-snap').style.display = 'none';
+  document.getElementById('btn-retake').style.display = 'inline-flex';
+  document.getElementById('photo-ring').classList.add('has-photo');
+  stopCamera();
+}
+
+function retakePhoto() {
+  photoDataURL = null;
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('btn-retake').style.display = 'none';
+  document.getElementById('photo-placeholder-icon').style.display = 'block';
+  document.getElementById('photo-ring').classList.remove('has-photo');
+  startCamera();
+}
+
+function stopCamera() {
+  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+  document.getElementById('video-feed').style.display = 'none';
+  document.getElementById('btn-snap').style.display = 'none';
+}
+
+function loadFilePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    photoDataURL = ev.target.result;
+    const preview = document.getElementById('photo-preview');
+    preview.src = photoDataURL;
+    preview.style.display = 'block';
+    document.getElementById('photo-placeholder-icon').style.display = 'none';
+    document.getElementById('video-feed').style.display = 'none';
+    document.getElementById('btn-snap').style.display = 'none';
+    document.getElementById('btn-retake').style.display = 'inline-flex';
+    document.getElementById('photo-ring').classList.add('has-photo');
+    stopCamera();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ─────────────────────────────────────────
+// REGISTER
+// ─────────────────────────────────────────
+function registrarVisita() {
+  const nombre = document.getElementById('v-nombre').value.trim();
+  const empresa = document.getElementById('v-empresa').value.trim();
+  const visita  = document.getElementById('v-visita').value.trim();
+  const depto   = document.getElementById('v-depto').value.trim();
+  const motivo  = document.getElementById('v-motivo').value.trim();
+  const idnum   = document.getElementById('v-idnum').value.trim();
+
+  if (!nombre || !empresa || !visita) {
+    toast('⚠ Completa: Nombre, Empresa y Visita a', 'error');
+    return;
+  }
+
+  const now = new Date();
+  const visitor = {
+    id: 'RG' + Date.now(),
+    nombre, empresa, visita, depto, motivo, idnum,
+    foto: photoDataURL,
+    entrada: now.toISOString(),
+    salida: null,
+    estado: 'activo'
+  };
+  visitors.unshift(visitor);
+  save();
+  updateStats();
+  clearForm();
+  showCredencial(visitor, false);
+  toast('✅ Visita registrada correctamente', 'success');
+}
+
+function clearForm() {
+  ['v-nombre','v-empresa','v-visita','v-depto','v-motivo','v-idnum'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  photoDataURL = null;
+  document.getElementById('photo-placeholder-icon').style.display = 'block';
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('video-feed').style.display = 'none';
+  document.getElementById('btn-snap').style.display = 'none';
+  document.getElementById('btn-retake').style.display = 'none';
+  document.getElementById('photo-ring').classList.remove('has-photo');
+  document.getElementById('file-photo').value = '';
+  stopCamera();
+}
+
+// ─────────────────────────────────────────
+// CREDENTIAL
+// ─────────────────────────────────────────
+function fmtDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' })
+    + ' ' + d.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+}
+
+function buildCredential(v, withSalida) {
+  const fotoHtml = v.foto
+    ? `<img class="cred-photo" src="${v.foto}" />`
+    : `<div class="cred-photo-placeholder">👤</div>`;
+  return `
+    <div class="cred-header">
+      <span class="cred-header-label">🛡 Pase de acceso · Essity</span>
+      <div class="cred-header-logo">Rolli Guard 2.0</div>
+    </div>
+    <div class="cred-body">
+      ${fotoHtml}
+      <div class="cred-info">
+        <div class="cred-name">${escH(v.nombre)}</div>
+        <div class="cred-company">${escH(v.empresa)}</div>
+        <div class="cred-row"><span class="cred-row-label">Visita a</span><span class="cred-row-value">${escH(v.visita)}</span></div>
+        ${v.depto ? `<div class="cred-row"><span class="cred-row-label">Depto.</span><span class="cred-row-value">${escH(v.depto)}</span></div>` : ''}
+        ${v.motivo ? `<div class="cred-row"><span class="cred-row-label">Motivo</span><span class="cred-row-value">${escH(v.motivo)}</span></div>` : ''}
+        <div class="cred-row"><span class="cred-row-label">Entrada</span><span class="cred-row-value">${fmtDate(v.entrada)}</span></div>
+        ${withSalida && v.salida ? `<div class="cred-row"><span class="cred-row-label">Salida</span><span class="cred-row-value">${fmtDate(v.salida)}</span></div>` : ''}
+      </div>
+    </div>
+    <div class="cred-footer">
+      <span class="cred-id-text">ID: ${v.id}</span>
+      <div class="cred-qr-placeholder">▦</div>
+    </div>
+  `;
+}
+
+function escH(str) {
+  return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showCredencial(v, salida) {
+  if (!salida) {
+    document.getElementById('credential-card').innerHTML = buildCredential(v, false);
+    document.getElementById('modal-cred').classList.add('open');
+  }
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function printCredential(zoneId) {
+  const zone = document.getElementById(zoneId);
+  const printWin = window.open('', '_blank', 'width=500,height=600');
+  printWin.document.write(`
+    <!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+      body { margin:0; padding:32px; display:flex; justify-content:center; align-items:flex-start; background:#f0f0f7; font-family:'Outfit',sans-serif; }
+      .credential-card { width:360px; background:#00005A; border-radius:16px; overflow:hidden; color:white; }
+      .cred-header { background:#F50082; padding:10px 20px; display:flex; justify-content:space-between; align-items:center; }
+      .cred-header-label { font-size:0.62rem; font-weight:800; letter-spacing:0.18em; text-transform:uppercase; }
+      .cred-header-logo { background:white; border-radius:5px; padding:3px 8px; font-size:0.7rem; font-weight:800; color:#00005A; }
+      .cred-body { padding:20px; display:flex; gap:16px; }
+      .cred-photo,.cred-photo-placeholder { width:72px;height:72px;border-radius:12px;object-fit:cover;border:3px solid #F50082;flex-shrink:0; }
+      .cred-photo-placeholder { background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2rem; }
+      .cred-info { flex:1; min-width:0; }
+      .cred-name { font-size:1.1rem;font-weight:800;margin-bottom:2px; }
+      .cred-company { font-size:0.8rem;color:rgba(255,255,255,0.55);margin-bottom:12px; }
+      .cred-row { display:flex;gap:6px;align-items:baseline;margin-bottom:5px; }
+      .cred-row-label { font-size:0.62rem;text-transform:uppercase;letter-spacing:0.09em;color:#F50082;font-weight:700;min-width:54px; }
+      .cred-row-value { font-size:0.8rem;color:rgba(255,255,255,0.85); }
+      .cred-footer { margin:0 20px 16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center; }
+      .cred-id-text { font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:rgba(255,255,255,0.3); }
+      .cred-qr-placeholder { width:40px;height:40px;background:rgba(255,255,255,0.06);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.2rem; }
+    </style></head><body>${zone.innerHTML}</body></html>
+
+`);
+printWin.document.close();
+printWin.onload = () => { printWin.print(); };
+}
+
+// ─────────────────────────────────────────
+// CHECKOUT
+// ─────────────────────────────────────────
+function iniciarSalida(id) {
+const v = visitors.find(x => x.id === id);
+if (!v) return;
+pendingSalidaId = id;
+document.getElementById(‘credential-salida’).innerHTML = buildCredential(v, false);
+document.getElementById(‘modal-salida’).classList.add(‘open’);
+}
+
+function confirmarSalida() {
+if (!pendingSalidaId) return;
+const v = visitors.find(x => x.id === pendingSalidaId);
+if (!v) return;
+v.salida = new Date().toISOString();
+v.estado = ‘salida’;
+save();
+document.getElementById(‘credential-salida’).innerHTML = buildCredential(v, true);
+closeModal(‘modal-salida’);
+updateStats();
+renderActivos();
+renderHistorial();
+pendingSalidaId = null;
+toast(‘👋 Salida registrada correctamente’, ‘info’);
+}
+
+// ─────────────────────────────────────────
+// STATS
+// ─────────────────────────────────────────
+function updateStats() {
+const today = new Date().toDateString();
+const activos = visitors.filter(v => v.estado === ‘activo’).length;
+const hoy = visitors.filter(v => new Date(v.entrada).toDateString() === today).length;
+const salidas = visitors.filter(v => v.salida && new Date(v.salida).toDateString() === today).length;
+const total = visitors.length;
+
+[‘r’,‘a’].forEach(s => {
+const e = id => document.getElementById(id);
+e(‘stat-activos-’+s) && (e(‘stat-activos-’+s).textContent = activos);
+e(‘stat-hoy-’+s)     && (e(‘stat-hoy-’+s).textContent = hoy);
+e(‘stat-salidas-’+s) && (e(‘stat-salidas-’+s).textContent = salidas);
+e(‘stat-total-’+s)   && (e(‘stat-total-’+s).textContent = total);
+});
+
+document.getElementById(‘badge-activos’).textContent = activos;
+}
+
+// ─────────────────────────────────────────
+// RENDER TABLES
+// ─────────────────────────────────────────
+function avatarCell(v) {
+if (v.foto) return `<img class="visitor-avatar" src="${v.foto}" />`;
+return `<div class="visitor-avatar-placeholder">👤</div>`;
+}
+
+function renderActivos() {
+const q = (document.getElementById(‘search-activos’).value || ‘’).toLowerCase();
+const list = visitors.filter(v =>
+v.estado === ‘activo’ &&
+(!q || v.nombre.toLowerCase().includes(q) || v.empresa.toLowerCase().includes(q) || v.visita.toLowerCase().includes(q))
+);
+const tbody = document.getElementById(‘tbody-activos’);
+if (!list.length) {
+tbody.innerHTML = `<tr><td colspan="7" class="table-empty"> <span class="table-empty-icon">🏢</span>Sin visitantes activos en este momento</td></tr>`;
+return;
+}
+tbody.innerHTML = list.map(v => `<tr> <td>${avatarCell(v)}</td> <td> <div class="visitor-name">${escH(v.nombre)}</div> ${v.idnum ?`<div class="visitor-id-sub">${escH(v.idnum)}</div>`: ''} </td> <td>${escH(v.empresa)}</td> <td> <div style="font-weight:500">${escH(v.visita)}</div> ${v.depto ?`<div class="visitor-id-sub">${escH(v.depto)}</div>`: ''} </td> <td style="font-size:0.82rem;white-space:nowrap;">${fmtDate(v.entrada)}</td> <td><span class="badge badge-active"><span class="badge-dot"></span>Activo</span></td> <td> <div class="actions-cell"> <button class="btn btn-outline btn-sm" title="Ver credencial" onclick='viewCredencial(${JSON.stringify(v)})'>🪪</button> <button class="btn btn-danger btn-sm" onclick="iniciarSalida('${v.id}')">🚪 Salida</button> </div> </td> </tr>`).join(’’);
+}
+
+function viewCredencial(v) {
+document.getElementById(‘credential-card’).innerHTML = buildCredential(v, false);
+document.getElementById(‘modal-cred’).classList.add(‘open’);
+}
+
+function renderHistorial() {
+const q = (document.getElementById(‘search-hist’).value || ‘’).toLowerCase();
+const list = visitors.filter(v =>
+!q || v.nombre.toLowerCase().includes(q) || v.empresa.toLowerCase().includes(q) || v.visita.toLowerCase().includes(q)
+);
+const tbody = document.getElementById(‘tbody-historial’);
+if (!list.length) {
+tbody.innerHTML = `<tr><td colspan="7" class="table-empty"> <span class="table-empty-icon">📋</span>Sin registros históricos aún</td></tr>`;
+return;
+}
+tbody.innerHTML = list.map(v => `<tr> <td>${avatarCell(v)}</td> <td><div class="visitor-name">${escH(v.nombre)}</div></td> <td>${escH(v.empresa)}</td> <td>${escH(v.visita)}</td> <td style="font-size:0.82rem;white-space:nowrap;">${fmtDate(v.entrada)}</td> <td style="font-size:0.82rem;white-space:nowrap;">${fmtDate(v.salida)}</td> <td> <span class="badge ${v.estado === 'activo' ? 'badge-active' : 'badge-out'}"> <span class="badge-dot"></span> ${v.estado === 'activo' ? 'Activo' : 'Salió'} </span> </td> </tr>`).join(’’);
+}
+
+// ─────────────────────────────────────────
+// EXPORT CSV
+// ─────────────────────────────────────────
+function exportCSV() {
+const cols = [‘ID’,‘Nombre’,‘Empresa’,‘Visita a’,‘Departamento’,‘Motivo’,‘ID Doc’,‘Entrada’,‘Salida’,‘Estado’];
+const rows = visitors.map(v => [
+v.id, v.nombre, v.empresa, v.visita, v.depto||’’, v.motivo||’’, v.idnum||’’,
+fmtDate(v.entrada), fmtDate(v.salida), v.estado
+]);
+const csv = ‘\uFEFF’ + [cols, …rows].map(r => r.map(x => `"${String(x).replace(/"/g,'""')}"`).join(’,’)).join(’\n’);
+const blob = new Blob([csv], { type: ‘text/csv;charset=utf-8;’ });
+const url = URL.createObjectURL(blob);
+const a = document.createElement(‘a’);
+a.href = url;
+a.download = ‘RolliGuard_Visitas_’ + new Date().toISOString().slice(0,10) + ‘.csv’;
+a.click();
+URL.revokeObjectURL(url);
+toast(‘⬇ CSV exportado correctamente’, ‘success’);
+}
+
+// INIT
+updateStats();
+</script>
+
+</body>
+</html>
